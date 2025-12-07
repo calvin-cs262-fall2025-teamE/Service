@@ -65,6 +65,8 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid post ID' });
+    
     const post = await prisma.post.findUnique({
       where: { id },
       include: {
@@ -106,6 +108,8 @@ const replySchema = z.object({
 router.post('/:id/reply', async (req, res, next) => {
   try {
     const postId = Number(req.params.id);
+    if (isNaN(postId)) return res.status(400).json({ error: 'Invalid post ID' });
+    
     const parsed = replySchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
     
@@ -126,6 +130,8 @@ router.post('/:id/reply', async (req, res, next) => {
 router.post('/:id/upvote', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid post ID' });
+    
     const post = await prisma.post.update({
       where: { id },
       data: { upvotes: { increment: 1 } },

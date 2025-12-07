@@ -24,6 +24,8 @@ router.get('/', async (_req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid community ID' });
+    
     const community = await prisma.community.findUnique({
       where: { id },
       include: {
@@ -49,6 +51,8 @@ router.get('/:id', async (req, res, next) => {
 router.get('/:id/posts', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid community ID' });
+    
     const posts = await prisma.post.findMany({
       where: { communityId: id },
       include: {
@@ -76,6 +80,8 @@ router.get('/:id/posts', async (req, res, next) => {
 router.post('/:id/join', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const communityId = Number(req.params.id);
+    if (isNaN(communityId)) return res.status(400).json({ error: 'Invalid community ID' });
+    
     const userId = req.userId!;
     
     const existing = await prisma.membership.findUnique({
