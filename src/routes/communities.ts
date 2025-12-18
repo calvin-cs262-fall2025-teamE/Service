@@ -59,18 +59,23 @@ router.get('/:id/posts', async (req, res, next) => {
         author: {
           select: { id: true, firstName: true, lastName: true },
         },
+        images: true, // Include images
       },
       orderBy: { createdAt: 'desc' },
     });
+    
+    // Transform responses to match frontend expectations
     res.json(posts.map(p => ({
       id: p.id,
       title: p.title,
       content: p.content,
       type: p.type,
-      authorId: p.authorId,
+      authorId: p.authorId.toString(), // Frontend expects string
       communityId: p.communityId,
       upvotes: p.upvotes,
-      timePosted: p.createdAt,
+      timePosted: p.createdAt, // Frontend expects timePosted
+      comments: [], // Frontend expects comments array (always present)
+      images: p.images?.map(img => img.imageUrl) || [], // Include images if they exist
     })));
   } catch (err) {
     next(err);

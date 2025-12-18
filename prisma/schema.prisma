@@ -48,6 +48,7 @@ model Post {
   community   Community  @relation(fields: [communityId], references: [id])
 
   replies     Reply[]
+  images      PostImage[]
 }
 
 model Reply {
@@ -60,6 +61,15 @@ model Reply {
 
   postId    Int
   post      Post     @relation(fields: [postId], references: [id])
+}
+
+model PostImage {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  imageUrl  String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Membership {
